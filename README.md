@@ -1,13 +1,29 @@
-# UniManagementSystem
+# University Exam System
 
-A desktop Java application that handles users, exams, and grading for a university environment.
+A desktop Java application for managing university exams, grading, and user administration. Lecturers create and publish exams, students take them and submit feedback, and administrators oversee users and results.
 
-I built this to provide a straightforward way for lecturers to create and publish exams and for students to take them and leave feedback. It removes the overhead of complex database setups by keeping everything local and self-contained.
+## Features
 
-### Tech Stack
-Java 21 and Swing for the user interface. It doesn't rely on external libraries or frameworks. Persistence is handled entirely through native Java object serialization.
+### Students
+- Take published exams and receive automatic grading
+- View exam details and results once published
+- Request re-correction with justification
+- Submit feedback on completed exams
 
-### Running It
+### Lecturers
+- Create exams with multiple question types
+- Publish exams for student access
+- Publish exam results
+- Manage assigned subjects
+
+### Administrators
+- Manage all user accounts (create, update, delete)
+- Search and list users
+- Assign subjects to lecturers
+- Control exam and results publication
+
+## Running It
+
 You can run the pre-compiled jar directly if you have Java installed:
 
 ```bash
@@ -22,20 +38,58 @@ jar cfe UniSystem.jar Main -C out .
 java -jar UniSystem.jar
 ```
 
-### Prerequisites
-You need JDK 21 or higher to build and run the project.
+## Prerequisites
 
-### Configuration
-There are no environment variables or external configuration files to set up. On startup, the application seeds a default admin account:
-* Username: admin
-* Password: admin123
+JDK 21 or higher to build and run.
 
-All application state is saved locally to a `university_data.ser` file in the current working directory.
+## Default Account
 
-### Architecture and Limitations
-The UI is built with standard Java Swing components separated roughly into auth, admin, lecturer, and student views. `DataManager.java` acts as a singleton repository. It writes the entire users map and exams list to disk whenever data changes.
+On startup, the application seeds a default admin account:
 
-This serialization approach works for a single-user desktop app, but it means concurrency isn't supported. Schema migrations are also not a thing here. If you modify the domain models without carefully managing `serialVersionUID`, the `university_data.ser` file will become unreadable. When that happens, you'll have to delete the file and start fresh.
+| Username | Password | Role |
+|----------|----------|------|
+| `admin` | `admin123` | Administrator |
 
-### License
-GPL-3.0
+## Tech Stack
+
+| Layer | Technology |
+|-------|-----------|
+| Language | Java 21 |
+| UI | Swing |
+| Persistence | Native Java Object Serialization |
+| Dependencies | None — fully self-contained |
+
+## Architecture
+
+```
+src/
+├── Main.java                  # Entry point
+├── exception/                 # Custom exceptions
+├── models/
+│   ├── academic/              # Exam, Question models
+│   └── users/                 # User, Student, Lecturer, Admin
+├── services/
+│   ├── interfaces/            # Service contracts
+│   └── impl/                  # Service implementations
+├── storage/
+│   └── DataManager.java       # Singleton data persistence
+└── views/
+    ├── auth/                  # Login UI
+    ├── admin/                 # Admin dashboard
+    ├── lecturer/              # Lecturer dashboard
+    └── student/               # Student dashboard + exam UI
+```
+
+## Data Storage
+
+All application state is saved locally to a `university_data.ser` file in the working directory. To reset the system, delete this file and restart.
+
+> **Note:** This serialization approach works for a single-user desktop app, but concurrency is not supported. If you modify domain models without managing `serialVersionUID`, the data file will become unreadable — delete it and start fresh.
+
+## Academic Context
+
+Developed as a course project for **Analysis and Design of Information Systems 1 (IS3-51)**.
+
+## License
+
+This project is licensed under the [GNU General Public License v3.0](LICENSE).
